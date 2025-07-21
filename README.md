@@ -16,6 +16,7 @@ A beautiful and modern web application to track and analyze your study sessions.
 - ⏰ **Start/End Times**: Track exact start and end times for each session
 
 ## Screenshots
+<img>[image.png]
 
 ### Login Page
 - Secure authentication with username and password
