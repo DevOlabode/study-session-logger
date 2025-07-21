@@ -39,7 +39,7 @@ A beautiful and modern web application to track and analyze your study sessions.
 
 1. **Clone or download the project**
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/DevOlabode/study-session-logger>
    cd study-session-logger
    ```
 
