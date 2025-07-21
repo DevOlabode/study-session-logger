@@ -22,9 +22,9 @@ A beautiful and modern web application to track and analyze your study sessions.
 - User registration functionality
 - Modern, clean design
 
-<img src="images/image5.png" alt="Sign In Page">
-<img src="images/image6.png" alt="Sign In Page">
-<img src="images/image4.png" alt="Sign In Page">
+<img src="images/image5.png" >
+<img src="images/image6.png" >
+<img src="images/image4.png" >
 
 ### Home Page
 - Interactive study timer with countdown
@@ -32,6 +32,9 @@ A beautiful and modern web application to track and analyze your study sessions.
 - View recent sessions with status indicators
 - Quick statistics overview
 - Responsive design for all devices
+
+<img src="images/image2.png" >
+<img src="images/image3.png" >
 
 ### Statistics Page
 - Interactive doughnut chart showing study time by subject
