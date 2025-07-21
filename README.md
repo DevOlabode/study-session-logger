@@ -15,9 +15,7 @@ A beautiful and modern web application to track and analyze your study sessions.
 - 📈 **Progress Tracking**: Monitor your learning progress over time
 - ⏰ **Start/End Times**: Track exact start and end times for each session
 
-## Screenshots
-<img src="images/image1.png" alt="description of image">
-
+<img src="images/image1.png" alt="Sign In Page">
 ### Login Page
 - Secure authentication with username and password
 - User registration functionality
