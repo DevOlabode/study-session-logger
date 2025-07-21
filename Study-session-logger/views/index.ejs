@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Session Logger</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> Study Session Logger</h1>
+            <p>Track your learning progress and stay motivated</p>
+        </div>
+
+        <div class="user-info">
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
+        <!-- Flash Messages -->
+        <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div class="flash-message flash-success">
+            <i class="fas fa-check-circle"></i> <%= success %>
+        </div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+        <div class="flash-message flash-error">
+            <i class="fas fa-exclamation-triangle"></i> <%= error %>
+        </div>
+        <% } %>
+
+        <div class="nav">
+            <a href="/" class="active"><i class="fas fa-home"></i> Home</a>
+            <a href="/stats"><i class="fas fa-chart-bar"></i> Statistics</a>
+        </div>
+
+        <div class="content">
+            <!-- Timer Section -->
+            <div class="timer-section">
+                <h2><i class="fas fa-clock"></i> Study Timer</h2>
+                <div class="timer-display" id="timer">00:00:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn start-btn" id="startBtn" onclick="startTimer()">
+                        <i class="fas fa-play"></i> Start Session
+                    </button>
+                    <button class="timer-btn stop-btn" id="stopBtn" onclick="stopTimer()" style="display: none;">
+                        <i class="fas fa-stop"></i> Stop Session
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add New Session Form -->
+            <div class="form-section">
+                <h2><i class="fas fa-plus-circle"></i> Add New Study Session</h2>
+                <form action="/session" method="POST" id="sessionForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required placeholder="e.g., Mathematics, Physics, History">
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Duration (minutes)</label>
+                            <input type="number" id="duration" name="duration" required min="1" placeholder="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" name="date" value="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Notes (optional)</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="What did you study? Any important concepts or achievements?"></textarea>
+                    </div>
+                    <input type="hidden" id="startTime" name="startTime">
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i> Save Session
+                    </button>
+                </form>
+            </div>
+
+            <!-- Statistics Summary -->
+            <% if (sessions.length > 0) { %>
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <div class="stat-number"><%= sessions.length %></div>
+                    <div class="stat-label">Total Sessions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><%= sessions.reduce((sum, session) => sum + session.duration, 0) %></div>
+                    <div class="stat-label">Total Minutes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><%= Math.round(sessions.reduce((sum, session) => sum + session.duration, 0) / 60 * 10) / 10 %></div>
+                    <div class="stat-label">Total Hours</div>
+                </div>
+            </div>
+            <% } %>
+
+            <!-- Study Sessions List -->
+            <div class="sessions-section">
+                <h2><i class="fas fa-list"></i> Recent Study Sessions</h2>
+                
+                <% if (sessions.length === 0) { %>
+                <div class="empty-state">
+                    <i class="fas fa-book-open"></i>
+                    <h3>No study sessions yet</h3>
+                    <p>Start your learning journey by adding your first study session above!</p>
+                </div>
+                <% } else { %>
+                    <% sessions.slice().reverse().forEach(session => { %>
+                    <div class="session-card">
+                        <div class="session-header">
+                            <div class="session-subject"><%= session.subject %></div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div class="session-duration"><%= session.duration %> min</div>
+                                <span class="session-status <%= session.status === 'active' ? 'status-active' : 'status-completed' %>">
+                                    <%= session.status %>
+                                </span>
+                                <% if (session.status === 'active') { %>
+                                <button class="complete-btn" onclick="completeSession('<%= session.id %>')">
+                                    <i class="fas fa-check"></i> Complete
+                                </button>
+                                <% } %>
+                                <button class="delete-btn" onclick="deleteSession('<%= session.id %>')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="session-date">
+                            <i class="fas fa-calendar"></i> <%= new Date(session.date).toLocaleDateString() %>
+                        </div>
+                        <div class="session-times">
+                            <i class="fas fa-clock"></i> 
+                            Start: <%= new Date(session.startTime).toLocaleTimeString() %> | 
+                            End: <%= new Date(session.endTime).toLocaleTimeString() %>
+                        </div>
+                        <% if (session.notes) { %>
+                        <div class="session-notes">
+                            <i class="fas fa-sticky-note"></i> <%= session.notes %>
+                        </div>
+                        <% } %>
+                    </div>
+                    <% }); %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="/js/timer.js"></script>
+    <script src="/js/sessions.js"></script>
+    <script src="/js/flash.js"></script>
+    <script>
+        // Check for active sessions on page load
+        window.addEventListener('load', function() {
+            const activeSessions = document.querySelectorAll('.status-active');
+            if (activeSessions.length > 0) {
+                console.log('Found active sessions');
+            }
+        });
+    </script>
+</body>
+</html> 

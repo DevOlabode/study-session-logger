@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Statistics - Study Session Logger</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/css/stats.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chart-bar"></i> Study Statistics</h1>
+            <p>Analyze your learning patterns and progress</p>
+        </div>
+
+        <div class="user-info">
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
+        <!-- Flash Messages -->
+        <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div class="flash-message flash-success">
+            <i class="fas fa-check-circle"></i> <%= success %>
+        </div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+        <div class="flash-message flash-error">
+            <i class="fas fa-exclamation-triangle"></i> <%= error %>
+        </div>
+        <% } %>
+
+        <div class="nav">
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/stats" class="active"><i class="fas fa-chart-bar"></i> Statistics</a>
+        </div>
+
+        <div class="content">
+            <% if (sessions.length === 0) { %>
+            <div class="empty-state">
+                <i class="fas fa-chart-line"></i>
+                <h3>No data to display</h3>
+                <p>Start logging your study sessions to see detailed statistics!</p>
+            </div>
+            <% } else { %>
+                <!-- Overview Statistics -->
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <div class="stat-number"><%= stats.totalSessions %></div>
+                        <div class="stat-label">Total Sessions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number"><%= stats.totalTime %></div>
+                        <div class="stat-label">Total Minutes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number"><%= Math.round(stats.totalTime / 60 * 10) / 10 %></div>
+                        <div class="stat-label">Total Hours</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number"><%= Object.keys(stats.subjects).length %></div>
+                        <div class="stat-label">Subjects Studied</div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="chart-section">
+                    <h2><i class="fas fa-chart-pie"></i> Study Time by Subject</h2>
+                    <div class="chart-container">
+                        <canvas id="subjectChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Subject Breakdown -->
+                <div class="subject-breakdown">
+                    <h2><i class="fas fa-list"></i> Subject Breakdown</h2>
+                    <% Object.entries(stats.subjects).forEach(([subject, data], index) => { %>
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <div class="subject-color" style="background: <%= ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F'][index % 8] %>;"></div>
+                            <div class="subject-name"><%= subject %></div>
+                        </div>
+                        <div class="subject-stats">
+                            <span><i class="fas fa-clock"></i> <%= data.totalTime %> min</span>
+                            <span><i class="fas fa-calendar"></i> <%= data.count %> sessions</span>
+                            <span><i class="fas fa-chart-line"></i> <%= Math.round(data.totalTime / data.count) %> min avg</span>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+
+                <!-- Recent Sessions -->
+                <div class="recent-sessions">
+                    <h2><i class="fas fa-history"></i> Recent Study Sessions</h2>
+                    <% sessions.slice().reverse().slice(0, 10).forEach(session => { %>
+                    <div class="session-item">
+                        <div class="session-subject"><%= session.subject %></div>
+                        <div class="session-details">
+                            <span><i class="fas fa-clock"></i> <%= session.duration %> min</span>
+                            <span><i class="fas fa-calendar"></i> <%= new Date(session.date).toLocaleDateString() %></span>
+                            <% if (session.notes) { %>
+                            <span><i class="fas fa-sticky-note"></i> <%= session.notes.substring(0, 50) %><%= session.notes.length > 50 ? '...' : '' %></span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="/js/flash.js"></script>
+    <script src="/js/stats.js"></script>
+    <script>
+        <% if (sessions.length > 0) { %>
+        // Prepare data for the chart
+        const subjects = <%- JSON.stringify(Object.keys(stats.subjects)) %>;
+        const subjectData = <%- JSON.stringify(Object.values(stats.subjects).map(s => s.totalTime)) %>;
+        <% } %>
+    </script>
+</body>
+</html> 

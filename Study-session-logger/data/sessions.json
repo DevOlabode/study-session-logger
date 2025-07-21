@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1752967074551",
+    "subject": "Mathematics",
+    "duration": 55,
+    "notes": "I learnt about authentication.",
+    "date": "2025-07-19",
+    "timestamp": "2025-07-19T23:17:54.551Z"
+  },
+  {
+    "id": "1752967118777",
+    "subject": "Web Development",
+    "duration": 100,
+    "notes": "I learnt about bcrypt, authentication and passport",
+    "date": "2025-07-19",
+    "timestamp": "2025-07-19T23:18:38.777Z"
+  }
+]
